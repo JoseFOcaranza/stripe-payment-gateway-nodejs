@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Buy cool new product</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
+  <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body style="font-family: sans-serif;">
+  <section style="display: flex;justify-content: center;align-items: center;">
+    <div
+      style="background-color: rgba(0,0,0,0.02); width:499px; padding: 33px;border-radius: 29px;box-shadow:18px 18px 13px rgb(0,0,0,0.05);">
+      <img src="https://images-na.ssl-images-amazon.com/images/I/81pvDYeb%2BqL._AC_SX522_.jpg" alt="The cover of Stubborn Attachments" />
+      <div class="description">
+        <h3>Asus Tarjeta Gráfica Nvidia GeForce RTX 3060 TUF-RTX3060-O12G</h3>
+        <p style="text-align: justify;">Marca 	Asus
+          Coprocesador de gráficos 	NVIDIA GeForce RTX 3060
+          Interfaz de salida de video 	HDMI 2.1 x 2, DisplayPort 1.4a x 3
+          Marca de la tarjeta gráfica 	NVIDIA
+          Tipo de RAM para gráficos 	GDDR6
+          Tamaño de RAM para gráficos 	12 GB
+          Velocidad del reloj de la memoria 	4000 GHz
+          Interfaz de la tarjeta gráfica 	PCI-Express x16
+          Resolución máxima de la pantalla 	7680 x 4320 Pixels
+          Recuento de ventiladores 	3</p>
+      </div>
+      <div style="display: flex;justify-content: center;">
+        <button type="button" id="checkout-button" style="background-color: rgb(0, 116, 212);color: rgb(255, 255, 255);padding: 15px;border-radius: 23px;
+    border: 1px solid rgba(0, 116, 212, 1);cursor: pointer;">Comprar <b> $1500.00</b></button>
+      </div>
+    </div>
+
+  </section>
+</body>
+<script type="text/javascript">
+  // Crea una instancia del objeto Stripe con tu API KEY publicable
+  // Aquí hay que cambiar la llave publicable por la suya
+  var stripe = Stripe("YOUR_PUBLISHABLE_KEY");
+  var checkoutButton = document.getElementById("checkout-button");
+
+  checkoutButton.addEventListener("click", function () {
+    fetch("/create-checkout-session", {
+      method: "POST",
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (session) {
+        return stripe.redirectToCheckout({ sessionId: session.id });
+      })
+      .then(function (result) {
+        // Si el reedireccionar pago falla debido a un error del navegador o de la red, 
+        // debes mostrar el mensaje de error al cliente
+        if (result.error) {
+          alert(result.error.message);
+        }
+      })
+      .catch(function (error) {
+        console.error("Error:", error);
+      });
+  });
+</script>
+
+</html>
